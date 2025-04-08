@@ -1,0 +1,1139 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="header-gr" data-animation-type="{{ section.settings.animation_type }}">
+  <div class="transparent-navbar" 
+       style="--initial-opacity: {{ section.settings.navbar_opacity | divided_by: 100.0 }}; 
+              --scrolled-opacity: {{ section.settings.navbar_scrolled_opacity | divided_by: 100.0 }};
+              --initial-blur: {{ section.settings.navbar_blur }}px;
+              --scrolled-blur: {{ section.settings.navbar_scrolled_blur }}px;
+              --navbar-color: {{ section.settings.navbar_color }};
+              --navbar-height: {{ section.settings.navbar_height }}px;
+              --navbar-padding: {{ section.settings.navbar_padding }}px;">
+    <div class="navbar-container" style="max-width: {{ section.settings.navbar_max_width }}px;">
+      <div class="navbar-left">
+        <button class="mobile-menu-button" aria-label="Menu" aria-expanded="false" style="color: {{ section.settings.mobile_button_color }};">
+          <i class="fas fa-bars"></i>
+        </button>
+        
+        <a href="/" class="header-logo-link desktop-only">
+          {% if section.settings.logo != blank %}
+            <img src="{{ section.settings.logo | img_url: 'master' }}" alt="{{ shop.name }}" class="header-logo-image" width="auto" height="{{ section.settings.logo_height }}">
+          {% else %}
+            <span class="header-logo-text" style="color: {{ section.settings.logo_text_color }}; font-size: {{ section.settings.logo_text_size }}px;">{{ section.settings.logo_text | default: shop.name }}</span>
+          {% endif %}
+        </a>
+      </div>
+      
+      <div class="navbar-center">
+        <nav class="navbar-navigation desktop-only" role="navigation">
+          <ul class="nav-links" style="gap: {{ section.settings.nav_links_gap }}px;">
+            {% for link in section.settings.menu.links %}
+              <li class="nav-item">
+                <a href="{{ link.url }}" class="nav-link" style="color: {{ section.settings.nav_link_color }}; font-weight: {{ section.settings.nav_link_weight }};">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+        
+        <!-- Logo centrado para móvil -->
+        <a href="/" class="header-logo-link mobile-only">
+          {% if section.settings.logo != blank %}
+            <img src="{{ section.settings.logo | img_url: 'master' }}" alt="{{ shop.name }}" class="header-logo-image" width="auto" height="{{ section.settings.logo_height }}">
+          {% else %}
+            <span class="header-logo-text" style="color: {{ section.settings.logo_text_color }}; font-size: {{ section.settings.logo_text_size }}px;">{{ section.settings.logo_text | default: shop.name }}</span>
+          {% endif %}
+        </a>
+      </div>
+      
+      <div class="navbar-right">
+        {% if section.settings.show_search %}
+          <div class="search-container desktop-only">
+            <form action="/search" method="get" class="search-form">
+              <input type="text" name="q" placeholder="{{ section.settings.search_placeholder }}" class="search-input" style="background-color: {{ section.settings.search_bg_color | color_modify: 'alpha', section.settings.search_bg_opacity | divided_by: 100.0 }}; color: {{ section.settings.search_text_color }};">
+              <button type="submit" class="search-button" style="color: {{ section.settings.search_icon_color }};">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+          </div>
+        {% endif %}
+        
+        {% if section.settings.show_cart %}
+        <a href="/cart" class="cart-link" style="color: {{ section.settings.cart_icon_color }};">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" style="background-color: {{ section.settings.cart_count_bg_color }}; color: {{ section.settings.cart_count_text_color }};">{{ cart.item_count }}</span>
+        </a>
+        {% endif %}
+        
+        {% if section.settings.show_account %}
+        <a href="/account" class="account-link" style="color: {{ section.settings.account_icon_color }};">
+          <i class="fas fa-user"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Menú móvil -->
+  <div class="mobile-menu" style="background-color: {{ section.settings.mobile_bg_color | color_modify: 'alpha', section.settings.mobile_bg_opacity | divided_by: 100.0 }}; width: {{ section.settings.mobile_menu_width }}px;">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-close" aria-label="Cerrar menú" style="color: {{ section.settings.mobile_text_color }};">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="mobile-menu-navigation">
+      <ul class="mobile-nav-links">
+        {% for link in section.settings.menu.links %}
+          <li class="mobile-nav-item">
+            <a href="{{ link.url }}" class="mobile-nav-link" style="color: {{ section.settings.mobile_text_color }}; font-weight: {{ section.settings.mobile_link_weight }};">{{ link.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    
+    <!-- Sección de redes sociales y búsqueda en el menú móvil -->
+    <div class="mobile-menu-footer">
+      {% if section.settings.show_search %}
+        <form action="/search" method="get" class="mobile-search-form">
+          <input type="text" name="q" placeholder="{{ section.settings.search_placeholder }}" class="mobile-search-input" style="background-color: {{ section.settings.search_bg_color | color_modify: 'alpha', section.settings.search_bg_opacity | divided_by: 100.0 }}; color: {{ section.settings.search_text_color }};">
+          <button type="submit" class="mobile-search-button" style="color: {{ section.settings.search_icon_color }};">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+      {% endif %}
+      
+      <!-- Sección de redes sociales -->
+      {% if section.settings.show_social_mobile %}
+        <div class="mobile-social-links" style="margin-top: 20px;">
+          {% if section.settings.social_title != blank %}
+            <h3 class="mobile-social-title" style="color: {{ section.settings.mobile_text_color }}; margin-bottom: 15px; text-align: center; font-size: 1.1rem;">
+              {{ section.settings.social_title }}
+            </h3>
+          {% endif %}
+          
+          <div class="mobile-social-icons" style="display: flex; justify-content: center; gap: {{ section.settings.social_icons_gap }}px;">
+            {% if section.settings.social_instagram %}
+              <a href="{{ section.settings.social_instagram }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_facebook %}
+              <a href="{{ section.settings.social_facebook }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_twitter %}
+              <a href="{{ section.settings.social_twitter }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_youtube %}
+              <a href="{{ section.settings.social_youtube }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_tiktok %}
+              <a href="{{ section.settings.social_tiktok }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="TikTok">
+                <i class="fab fa-tiktok"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_pinterest %}
+              <a href="{{ section.settings.social_pinterest }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="Pinterest">
+                <i class="fab fa-pinterest"></i>
+              </a>
+            {% endif %}
+            {% if section.settings.social_whatsapp %}
+              <a href="{{ section.settings.social_whatsapp }}" class="mobile-social-link" style="color: {{ section.settings.mobile_text_color }}; font-size: {{ section.settings.social_icons_size }}px;" target="_blank" rel="noopener" aria-label="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <div class="mobile-menu-overlay" style="background-color: {{ section.settings.mobile_overlay_color }};"></div>
+</div>
+
+{% schema %}
+{
+  "name": "Header GR",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Altura del logo",
+      "default": 50
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Texto del logo (si no hay imagen)",
+      "default": "GRANITO"
+    },
+    {
+      "type": "color",
+      "id": "logo_text_color",
+      "label": "Color del texto del logo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "logo_text_size",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño del texto del logo",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Navegación"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menú de navegación",
+      "default": "main-menu"
+    },
+    {
+      "type": "range",
+      "id": "nav_links_size",
+      "min": 80,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Tamaño de enlaces",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "nav_links_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacio entre enlaces",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "nav_link_color",
+      "label": "Color de enlaces",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "nav_link_weight",
+      "label": "Peso de fuente de enlaces",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "nav_link_hover_color",
+      "label": "Color de enlaces al hover",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "header",
+      "content": "Barra de navegación"
+    },
+    {
+      "type": "color",
+      "id": "navbar_color",
+      "label": "Color de fondo",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "navbar_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad inicial",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "navbar_scrolled_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad al hacer scroll",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "navbar_blur",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desenfoque inicial",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "navbar_scrolled_blur",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desenfoque al hacer scroll",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "navbar_height",
+      "min": 50,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Altura de la barra",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "navbar_padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding horizontal",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "navbar_max_width",
+      "min": 800,
+      "max": 2000,
+      "step": 100,
+      "unit": "px",
+      "label": "Ancho máximo",
+      "default": 1400
+    },
+    {
+      "type": "select",
+      "id": "animation_type",
+      "label": "Animación al cargar",
+      "options": [
+        {
+          "value": "none",
+          "label": "Ninguna"
+        },
+        {
+          "value": "fade",
+          "label": "Desvanecer"
+        },
+        {
+          "value": "slide-down",
+          "label": "Deslizar hacia abajo"
+        }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "header",
+      "content": "Búsqueda"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Mostrar búsqueda",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Texto del placeholder",
+      "default": "Buscar..."
+    },
+    {
+      "type": "color",
+      "id": "search_bg_color",
+      "label": "Color de fondo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "search_bg_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad del fondo",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "search_text_color",
+      "label": "Color del texto",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "search_icon_color",
+      "label": "Color del icono",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Carrito"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Mostrar carrito",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "cart_icon_color",
+      "label": "Color del icono",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "cart_count_bg_color",
+      "label": "Color de fondo del contador",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "color",
+      "id": "cart_count_text_color",
+      "label": "Color del texto del contador",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Cuenta"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Mostrar icono de cuenta",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "account_icon_color",
+      "label": "Color del icono",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Menú móvil"
+    },
+    {
+      "type": "color",
+      "id": "mobile_button_color",
+      "label": "Color del botón de menú",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mobile_bg_color",
+      "label": "Color de fondo",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "range",
+      "id": "mobile_bg_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad del fondo",
+      "default": 95
+    },
+    {
+      "type": "color",
+      "id": "mobile_text_color",
+      "label": "Color del texto",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "mobile_link_weight",
+      "label": "Peso de fuente de enlaces",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "mobile_link_hover_bg",
+      "label": "Color de fondo al hover",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mobile_link_hover_bg_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad del fondo al hover",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "mobile_link_hover_color",
+      "label": "Color del texto al hover",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mobile_overlay_color",
+      "label": "Color del overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "mobile_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacidad del overlay",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "mobile_menu_animation",
+      "label": "Animación del menú",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Deslizar desde la izquierda"
+        },
+        {
+          "value": "fade",
+          "label": "Desvanecer"
+        },
+        {
+          "value": "scale",
+          "label": "Escalar"
+        }
+      ],
+      "default": "slide"
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_animation_speed",
+      "min": 100,
+      "max": 1000,
+      "step": 50,
+      "unit": "ms",
+      "label": "Velocidad de animación",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_width",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Ancho del menú",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Redes sociales en móvil"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_mobile",
+      "label": "Mostrar redes sociales",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_title",
+      "label": "Título de redes sociales",
+      "default": "Síguenos en redes"
+    },
+    {
+      "type": "range",
+      "id": "social_icons_size",
+      "min": 16,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamaño de iconos",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "social_icons_gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacio entre iconos",
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "social_instagram",
+      "label": "URL de Instagram"
+    },
+    {
+      "type": "text",
+      "id": "social_facebook",
+      "label": "URL de Facebook"
+    },
+    {
+      "type": "text",
+      "id": "social_twitter",
+      "label": "URL de Twitter"
+    },
+    {
+      "type": "text",
+      "id": "social_youtube",
+      "label": "URL de YouTube"
+    },
+    {
+      "type": "text",
+      "id": "social_tiktok",
+      "label": "URL de TikTok"
+    },
+    {
+      "type": "text",
+      "id": "social_pinterest",
+      "label": "URL de Pinterest"
+    },
+    {
+      "type": "text",
+      "id": "social_whatsapp",
+      "label": "URL de WhatsApp"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header GR",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .header-gr {
+    position: relative;
+    z-index: 1000;
+  }
+
+  /* Animaciones de carga */
+  .header-gr[data-animation-type="fade"] .transparent-navbar {
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  .header-gr[data-animation-type="slide-down"] .transparent-navbar {
+    transform: translateY(-100%);
+    animation: slideDown 0.8s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+  }
+
+  .transparent-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    height: var(--navbar-height, 80px);
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+    background-color: {{ section.settings.navbar_color | color_modify: 'alpha', section.settings.navbar_opacity | divided_by: 100.0 }};
+    backdrop-filter: blur({{ section.settings.navbar_blur }}px);
+    -webkit-backdrop-filter: blur({{ section.settings.navbar_blur }}px);
+  }
+
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--navbar-padding, 20px);
+    height: 100%;
+    max-width: {{ section.settings.navbar_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .navbar-left, .navbar-right {
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .header-logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: {{ section.settings.logo_text_color }};
+    transition: opacity 0.3s ease;
+  }
+
+  .header-logo-link:hover {
+    opacity: 0.8;
+  }
+
+  .header-logo-image {
+    max-height: {{ section.settings.logo_height }}px;
+    width: auto;
+  }
+
+  .header-logo-text {
+    font-size: {{ section.settings.logo_text_size }}px;
+    font-weight: 700;
+    color: {{ section.settings.logo_text_color }};
+  }
+
+  .navbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .navbar-navigation {
+    display: flex;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: {{ section.settings.nav_links_gap }}px;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-link {
+    color: {{ section.settings.nav_link_color }};
+    text-decoration: none;
+    font-weight: {{ section.settings.nav_link_weight }};
+    font-size: calc(1rem * {{ section.settings.nav_links_size | divided_by: 100.0 }});
+    padding: 5px 0;
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: {{ section.settings.nav_link_hover_color }};
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: {{ section.settings.nav_link_hover_color }};
+  }
+
+  .search-container {
+    margin-right: 20px;
+  }
+
+  .search-form {
+    display: flex;
+    align-items: center;
+  }
+
+  .search-input {
+    background-color: {{ section.settings.search_bg_color | color_modify: 'alpha', section.settings.search_bg_opacity | divided_by: 100.0 }};
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    color: {{ section.settings.search_text_color }};
+    width: 150px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    width: 180px;
+    background-color: {{ section.settings.search_bg_color | color_modify: 'alpha', section.settings.search_bg_opacity | plus: 10 | divided_by: 100.0 }};
+  }
+
+  .search-input::placeholder {
+    color: {{ section.settings.search_text_color | color_modify: 'alpha', 0.7 }};
+  }
+
+  .search-button {
+    background: transparent;
+    border: none;
+    color: {{ section.settings.search_icon_color }};
+    cursor: pointer;
+    margin-left: -35px;
+    transition: transform 0.3s ease;
+  }
+
+  .search-button:hover {
+    transform: scale(1.1);
+  }
+
+  .cart-link {
+    display: flex;
+    align-items: center;
+    color: {{ section.settings.cart_icon_color }};
+    text-decoration: none;
+    margin-right: 15px;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .cart-link:hover {
+    transform: scale(1.1);
+  }
+
+  .cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: {{ section.settings.cart_count_bg_color }};
+    color: {{ section.settings.cart_count_text_color }};
+    font-size: 0.7rem;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .account-link {
+    display: flex;
+    align-items: center;
+    color: {{ section.settings.account_icon_color }};
+    text-decoration: none;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
+  }
+
+  .account-link:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-menu-button {
+    display: none;
+    background: transparent;
+    border: none;
+    color: {{ section.settings.mobile_button_color }};
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    padding: 8px;
+    z-index: 1001;
+  }
+
+  .mobile-menu-button:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: {{ section.settings.mobile_menu_width }}px;
+    max-width: 90vw;
+    height: 100vh;
+    background-color: {{ section.settings.mobile_bg_color | color_modify: 'alpha', section.settings.mobile_bg_opacity | divided_by: 100.0 }};
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform {{ section.settings.mobile_menu_animation_speed }}ms ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-menu.active {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-menu-close {
+    background: transparent;
+    border: none;
+    color: {{ section.settings.mobile_text_color }};
+    opacity: 1;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .mobile-menu-close:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-menu-navigation {
+    flex: 1;
+    padding: 20px 0;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-item {
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-nav-link {
+    color: {{ section.settings.mobile_text_color }};
+    opacity: 1;
+    text-decoration: none;
+    font-weight: {{ section.settings.mobile_link_weight }};
+    font-size: calc(1.1rem * {{ section.settings.nav_links_size | divided_by: 100.0 }});
+    padding: 15px 20px;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    background-color: rgba(0, 0, 0, {{ section.settings.mobile_link_hover_bg_opacity | divided_by: 100.0 }});
+    color: {{ section.settings.mobile_link_hover_color }};
+  }
+
+  .mobile-menu-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-search-form {
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-search-input {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+    color: {{ section.settings.search_text_color }};
+    opacity: 1;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .mobile-search-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-search-input::placeholder {
+    color: {{ section.settings.search_text_color | color_modify: 'alpha', 0.7 }};
+  }
+
+  .mobile-search-button {
+    background: transparent;
+    border: none;
+    color: {{ section.settings.search_icon_color }};
+    opacity: 1;
+    cursor: pointer;
+    margin-left: -35px;
+    transition: transform 0.3s ease;
+  }
+
+  .mobile-search-button:hover {
+    transform: scale(1.1);
+  }
+
+  .mobile-social-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .mobile-social-title {
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: {{ section.settings.mobile_text_color }};
+  }
+
+  .mobile-social-icons {
+    display: flex;
+    justify-content: center;
+    gap: {{ section.settings.social_icons_gap }}px;
+    flex-wrap: wrap;
+  }
+
+  .mobile-social-link {
+    font-size: {{ section.settings.social_icons_size }}px;
+    color: {{ section.settings.mobile_text_color }};
+    opacity: 1;
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-social-link:hover {
+    transform: scale(1.2);
+    color: {{ section.settings.mobile_link_hover_color }};
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity {{ section.settings.mobile_menu_animation_speed }}ms ease, visibility {{ section.settings.mobile_menu_animation_speed }}ms ease;
+    background-color: {{ section.settings.mobile_overlay_color }};
+    cursor: pointer;
+  }
+
+  .mobile-menu-overlay.active {
+    opacity: {{ section.settings.mobile_overlay_opacity | divided_by: 100.0 }};
+    visibility: visible;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: flex;
+  }
+
+  @media screen and (max-width: 990px) {
+    .mobile-only {
+      display: flex;
+    }
+    
+    .desktop-only {
+      display: none;
+    }
+    
+    .navbar-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .mobile-menu-button {
+      display: block;
+      margin-right: 0;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .header-logo-text {
+      font-size: calc({{ section.settings.logo_text_size }}px * 0.8);
+    }
+    
+    .navbar-container {
+      padding: 0 calc(var(--navbar-padding, 20px) * 0.75);
+    }
+    
+    .header-logo-image {
+      max-height: calc({{ section.settings.logo_height }}px * 0.8);
+    }
+
+    .transparent-navbar {
+      height: calc(var(--navbar-height, 80px) * 0.9);
+    }
+  }
+</style>
+
+{{ 'header-gr.js' | asset_url | script_tag }}
