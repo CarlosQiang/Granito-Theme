@@ -3,7 +3,7 @@
 <div class="header-gr" data-animation-type="{{ section.settings.animation_type }}">
   <div class="transparent-navbar" 
        style="--initial-opacity: {{ section.settings.navbar_opacity | divided_by: 100.0 }}; 
-              --scrolled-opacity: {{ section.settings.navbar_scrolled_opacity | divided_by: 100.0 }};
+              --scrolled_opacity: {{ section.settings.navbar_scrolled_opacity | divided_by: 100.0 }};
               --initial-blur: {{ section.settings.navbar_blur }}px;
               --scrolled-blur: {{ section.settings.navbar_scrolled_blur }}px;
               --navbar-color: {{ section.settings.navbar_color }};
@@ -74,7 +74,11 @@
   </div>
   
   <!-- Menú móvil -->
-  <div class="mobile-menu" style="background-color: {{ section.settings.mobile_bg_color | color_modify: 'alpha', section.settings.mobile_bg_opacity | divided_by: 100.0 }}; width: {{ section.settings.mobile_menu_width }}px;">
+  <div class="mobile-menu" 
+       data-opacity="{{ section.settings.mobile_bg_opacity | divided_by: 100.0 }}"
+       style="--mobile-bg-color: #D4AF37; 
+              --mobile-bg-opacity: {{ section.settings.mobile_bg_opacity | divided_by: 100.0 }}; 
+              width: {{ section.settings.mobile_menu_width }}px;">
     <div class="mobile-menu-header">
       <button class="mobile-menu-close" aria-label="Cerrar menú" style="color: {{ section.settings.mobile_text_color }};">
         <i class="fas fa-times"></i>
@@ -95,8 +99,8 @@
     <div class="mobile-menu-footer">
       {% if section.settings.show_search %}
         <form action="/search" method="get" class="mobile-search-form">
-          <input type="text" name="q" placeholder="{{ section.settings.search_placeholder }}" class="mobile-search-input" style="background-color: {{ section.settings.search_bg_color | color_modify: 'alpha', section.settings.search_bg_opacity | divided_by: 100.0 }}; color: {{ section.settings.search_text_color }};">
-          <button type="submit" class="mobile-search-button" style="color: {{ section.settings.search_icon_color }};">
+          <input type="text" name="q" placeholder="{{ section.settings.search_placeholder }}" class="mobile-search-input" style="background-color: rgba(0, 0, 0, 0.1); color: {{ section.settings.mobile_text_color }};">
+          <button type="submit" class="mobile-search-button" style="color: {{ section.settings.mobile_text_color }};">
             <i class="fas fa-search"></i>
           </button>
         </form>
@@ -464,12 +468,6 @@
       "id": "mobile_button_color",
       "label": "Color del botón de menú",
       "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "mobile_bg_color",
-      "label": "Color de fondo",
-      "default": "#D4AF37"
     },
     {
       "type": "range",
@@ -913,7 +911,7 @@
     width: {{ section.settings.mobile_menu_width }}px;
     max-width: 90vw;
     height: 100vh;
-    background-color: {{ section.settings.mobile_bg_color | color_modify: 'alpha', section.settings.mobile_bg_opacity | divided_by: 100.0 }};
+    background-color: rgba(212, 175, 55, var(--mobile-bg-opacity, 0.95));
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -993,11 +991,11 @@
   }
 
   .mobile-search-input {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
     border: none;
     border-radius: 20px;
     padding: 10px 15px;
-    color: {{ section.settings.search_text_color }};
+    color: {{ section.settings.mobile_text_color }};
     opacity: 1;
     width: 100%;
     font-size: 1rem;
@@ -1005,18 +1003,18 @@
 
   .mobile-search-input:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.15);
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
   }
 
   .mobile-search-input::placeholder {
-    color: {{ section.settings.search_text_color | color_modify: 'alpha', 0.7 }};
+    color: {{ section.settings.mobile_text_color | color_modify: 'alpha', 0.7 }};
   }
 
   .mobile-search-button {
     background: transparent;
     border: none;
-    color: {{ section.settings.search_icon_color }};
+    color: {{ section.settings.mobile_text_color }};
     opacity: 1;
     cursor: pointer;
     margin-left: -35px;

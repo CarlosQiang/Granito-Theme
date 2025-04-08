@@ -16,6 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const mobileNavLinks = document.querySelectorAll(".mobile-nav-link")
   const mobileSocialLinks = document.querySelectorAll(".mobile-social-link")
 
+  // Establecer variables CSS personalizadas para la opacidad del menú móvil
+  if (mobileMenu) {
+    // Obtener el valor de opacidad del atributo data
+    const mobileOpacity = mobileMenu.getAttribute("data-opacity") || 0.95
+    // Establecer la variable CSS personalizada
+    document.documentElement.style.setProperty("--mobile-bg-opacity", mobileOpacity)
+  }
+
   /**
    * Abre el menú móvil
    */
@@ -29,25 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       document.body.style.overflow = "hidden" // Evitar scroll del body
 
-      // Asegurarse de que la opacidad se aplique correctamente
-      const mobileMenuStyle = window.getComputedStyle(mobileMenu)
-      const currentBgColor = mobileMenuStyle.backgroundColor
+      // Forzar la aplicación de la opacidad correcta
+      const opacity = mobileMenu.getAttribute("data-opacity") || 0.95
+      const bgColor = getComputedStyle(mobileMenu).getPropertyValue("--mobile-bg-color") || "#D4AF37"
 
-      // Verificar si el color de fondo ya tiene opacidad
-      if (currentBgColor.startsWith("rgba")) {
-        console.log("Color de fondo con opacidad aplicada:", currentBgColor)
-      } else if (currentBgColor.startsWith("rgb")) {
-        // Convertir rgb a rgba con la opacidad deseada
-        const opacity = Number.parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue("--mobile-bg-opacity") || 0.9,
-        )
-        const rgbValues = currentBgColor.match(/\d+/g)
-        if (rgbValues && rgbValues.length === 3) {
-          const rgbaColor = `rgba(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]}, ${opacity})`
-          mobileMenu.style.backgroundColor = rgbaColor
-          console.log("Aplicando color con opacidad:", rgbaColor)
-        }
-      }
+      // Aplicar directamente el color con la opacidad correcta
+      mobileMenu.style.backgroundColor = `rgba(212, 175, 55, ${opacity})`
+      console.log(`Aplicando color de fondo: rgba(212, 175, 55, ${opacity})`)
     }
   }
 
