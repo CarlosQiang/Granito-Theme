@@ -25,6 +25,7 @@
       "block_order": [
         "announcement-bar-0"
       ],
+      "disabled": true,
       "settings": {
         "auto_rotate": false,
         "change_slides_speed": 5,
@@ -37,6 +38,7 @@
     },
     "header": {
       "type": "header",
+      "disabled": true,
       "settings": {
         "logo_position": "middle-left",
         "mobile_logo_position": "center",
@@ -53,10 +55,70 @@
         "padding_top": 20,
         "padding_bottom": 20
       }
+    },
+    "header_gr_7kAB83": {
+      "type": "header-gr",
+      "settings": {
+        "logo_height": 50,
+        "logo_text": "GRANITO",
+        "logo_text_color": "#000000",
+        "logo_text_size": 24,
+        "menu": "main-menu",
+        "nav_links_size": 100,
+        "nav_links_gap": 15,
+        "nav_link_color": "#121212",
+        "nav_link_weight": "500",
+        "nav_link_hover_color": "#D4AF37",
+        "navbar_color": "#000000",
+        "navbar_opacity": 0,
+        "navbar_scrolled_opacity": 80,
+        "navbar_blur": 0,
+        "navbar_scrolled_blur": 10,
+        "navbar_height": 80,
+        "navbar_padding": 20,
+        "navbar_max_width": 1400,
+        "animation_type": "fade",
+        "show_search": true,
+        "search_placeholder": "Buscar...",
+        "search_bg_color": "#FFFFFF",
+        "search_bg_opacity": 20,
+        "search_text_color": "#FFFFFF",
+        "search_icon_color": "#FFFFFF",
+        "show_cart": true,
+        "cart_icon_color": "#FFFFFF",
+        "cart_count_bg_color": "#D4AF37",
+        "cart_count_text_color": "#000000",
+        "show_account": true,
+        "account_icon_color": "#FFFFFF",
+        "mobile_button_color": "#FFFFFF",
+        "mobile_bg_opacity": 100,
+        "mobile_text_color": "#000000",
+        "mobile_link_weight": "600",
+        "mobile_link_hover_bg": "#000000",
+        "mobile_link_hover_bg_opacity": 10,
+        "mobile_link_hover_color": "#FFFFFF",
+        "mobile_overlay_color": "#000000",
+        "mobile_overlay_opacity": 50,
+        "mobile_menu_animation": "slide",
+        "mobile_menu_animation_speed": 300,
+        "mobile_menu_width": 300,
+        "show_social_mobile": true,
+        "social_title": "Síguenos en redes",
+        "social_icons_size": 24,
+        "social_icons_gap": 20,
+        "social_instagram": "",
+        "social_facebook": "",
+        "social_twitter": "",
+        "social_youtube": "",
+        "social_tiktok": "",
+        "social_pinterest": "",
+        "social_whatsapp": ""
+      }
     }
   },
   "order": [
     "announcement-bar",
-    "header"
+    "header",
+    "header_gr_7kAB83"
   ]
 }
