@@ -1,0 +1,1989 @@
+<div class="main-spots-info-gr page-width" id="MainSpot-{{ section.id }}">
+  <div class="main-spots-info-wrapper"
+       style="
+         {% if section.settings.margin_top != blank %}margin-top: {{ section.settings.margin_top }}px;{% endif %}
+         {% if section.settings.margin_bottom != blank %}margin-bottom: {{ section.settings.margin_bottom }}px;{% endif %}
+         {% if section.settings.padding != blank %}padding: {{ section.settings.padding }}px;{% endif %}
+         {% if section.settings.background_type == 'color' %}
+           background-color: {{ section.settings.background_color }};
+         {% elsif section.settings.background_type == 'gradient' %}
+           background: linear-gradient(
+             {{ section.settings.gradient_direction }}deg, 
+             {{ section.settings.gradient_color_1 }} {{ section.settings.gradient_position_1 }}%, 
+             {{ section.settings.gradient_color_2 }} {{ section.settings.gradient_position_2 }}%
+           );
+         {% endif %}
+         border-radius: {{ section.settings.border_radius }}px;
+         {% if section.settings.enable_shadow %}
+           box-shadow: {{ section.settings.shadow_h_offset }}px {{ section.settings.shadow_v_offset }}px {{ section.settings.shadow_blur }}px {{ section.settings.shadow_spread }}px {{ section.settings.shadow_color }};
+         {% endif %}
+       "
+  >
+    <div class="main-spots-info-content">
+      <!-- Columna izquierda: Carrusel/Video -->
+      <div class="main-spots-info-media-column">
+        {% if section.settings.media_type == 'video' and spot.metafields.custom.video_url != blank %}
+          <div class="main-spots-info-video-container">
+            <video 
+              {% if section.settings.autoplay %}autoplay{% endif %} 
+              {% if section.settings.loop %}loop{% endif %} 
+              {% if section.settings.muted %}muted{% endif %} 
+              {% if section.settings.controls %}controls{% endif %} 
+              {% if section.settings.video_cover %}class="object-cover"{% endif %}
+              playsinline
+              id="spot-video-{{ section.id }}"
+            >
+              <source src="{{ spot.metafields.custom.video_url }}" type="video/mp4">
+              Tu navegador no soporta videos HTML5.
+            </video>
+          </div>
+        {% elsif section.settings.media_type == 'carousel' and spot.images.size > 0 %}
+          <div class="main-spots-info-carousel" id="SpotCarousel-{{ section.id }}">
+            <div class="carousel-container">
+              {% for image in spot.images %}
+                <div class="carousel-slide {% if forloop.first %}active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+                  {% if forloop.first %}
+                    {{ image | image_url: width: 1200 | image_tag: 
+                      loading: 'eager', 
+                      class: 'carousel-image', 
+                      alt: image.alt | default: spot.title 
+                    }}
+                  {% else %}
+                    {{ image | image_url: width: 1200 | image_tag: 
+                      loading: 'lazy', 
+                      class: 'carousel-image', 
+                      alt: image.alt | default: spot.title 
+                    }}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+            
+            {% if section.settings.show_carousel_indicators and spot.images.size > 1 %}
+              <div class="carousel-indicators">
+                {% for image in spot.images %}
+                  <button class="carousel-indicator {% if forloop.first %}active{% endif %}" data-slide-to="{{ forloop.index0 }}" aria-label="Slide {{ forloop.index }}"></button>
+                {% endfor %}
+              </div>
+            {% endif %}
+            
+            {% if section.settings.show_carousel_controls and spot.images.size > 1 %}
+              <button class="carousel-control carousel-control-prev" aria-label="Anterior">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button class="carousel-control carousel-control-next" aria-label="Siguiente">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            {% endif %}
+          </div>
+        {% elsif spot.featured_image != blank %}
+          <div class="main-spots-info-image-container">
+            {{ spot.featured_image | image_url: width: 1200 | image_tag: 
+              loading: 'eager', 
+              class: 'main-spots-info-image', 
+              alt: spot.featured_image.alt | default: spot.title 
+            }}
+          </div>
+        {% else %}
+          <div class="main-spots-info-placeholder">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            <p>No hay imágenes disponibles para este spot</p>
+          </div>
+        {% endif %}
+        
+        {% if section.settings.show_gallery_thumbnails and spot.images.size > 1 %}
+          <div class="spot-thumbnails">
+            {% for image in spot.images %}
+              <div class="spot-thumbnail {% if forloop.first %}active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+                {{ image | image_url: width: 150 | image_tag: 
+                  loading: 'lazy', 
+                  alt: image.alt | default: spot.title 
+                }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Columna derecha: Información y mapa -->
+      <div class="main-spots-info-info-column">
+        <div class="main-spots-info-info-content">
+          {% if section.settings.show_spot_name %}
+            <{{ section.settings.spot_name_tag }} 
+              class="main-spots-info-title {% if section.settings.enable_title_text_shadow %}text-shadow{% endif %}"
+              style="
+                color: {{ section.settings.title_color }};
+                font-size: {{ section.settings.title_font_size }}px;
+                font-weight: {{ section.settings.title_font_weight }};
+                {% if section.settings.title_font_family != 'inherit' %}font-family: {{ section.settings.title_font_family }};{% endif %}
+                {% if section.settings.title_letter_spacing != blank %}letter-spacing: {{ section.settings.title_letter_spacing }}px;{% endif %}
+                {% if section.settings.title_line_height != blank %}line-height: {{ section.settings.title_line_height }};{% endif %}
+                {% if section.settings.title_text_transform != 'none' %}text-transform: {{ section.settings.title_text_transform }};{% endif %}
+                {% if section.settings.enable_title_text_shadow %}
+                  text-shadow: {{ section.settings.title_shadow_h_offset }}px {{ section.settings.title_shadow_v_offset }}px {{ section.settings.title_shadow_blur }}px {{ section.settings.title_shadow_color }};
+                {% endif %}
+                {% if section.settings.title_text_decoration != 'none' %}text-decoration: {{ section.settings.title_text_decoration }};{% endif %}
+                margin-bottom: {{ section.settings.title_margin_bottom }}px;
+              "
+            >
+              {% if section.settings.enable_title_gradient %}
+                <span class="gradient-text" style="
+                  background: linear-gradient(
+                    {{ section.settings.title_gradient_direction }}deg, 
+                    {{ section.settings.title_gradient_color_1 }} {{ section.settings.title_gradient_position_1 }}%, 
+                    {{ section.settings.title_gradient_color_2 }} {{ section.settings.title_gradient_position_2 }}%
+                  );
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                  text-fill-color: transparent;
+                ">
+                  {{ spot.title }}
+                </span>
+              {% else %}
+                {{ spot.title }}
+              {% endif %}
+            </{{ section.settings.spot_name_tag }}>
+          {% endif %}
+
+          {% if section.settings.show_subtitle and spot.metafields.custom.subtitle != blank %}
+            <{{ section.settings.subtitle_tag }} 
+              class="main-spots-info-subtitle {% if section.settings.enable_subtitle_text_shadow %}text-shadow{% endif %}"
+              style="
+                color: {{ section.settings.subtitle_color }};
+                font-size: {{ section.settings.subtitle_font_size }}px;
+                font-weight: {{ section.settings.subtitle_font_weight }};
+                {% if section.settings.subtitle_font_family != 'inherit' %}font-family: {{ section.settings.subtitle_font_family }};{% endif %}
+                {% if section.settings.subtitle_letter_spacing != blank %}letter-spacing: {{ section.settings.subtitle_letter_spacing }}px;{% endif %}
+                {% if section.settings.subtitle_line_height != blank %}line-height: {{ section.settings.subtitle_line_height }};{% endif %}
+                {% if section.settings.subtitle_text_transform != 'none' %}text-transform: {{ section.settings.subtitle_text_transform }};{% endif %}
+                {% if section.settings.enable_subtitle_text_shadow %}
+                  text-shadow: {{ section.settings.subtitle_shadow_h_offset }}px {{ section.settings.subtitle_shadow_v_offset }}px {{ section.settings.subtitle_shadow_blur }}px {{ section.settings.subtitle_shadow_color }};
+                {% endif %}
+                {% if section.settings.subtitle_text_decoration != 'none' %}text-decoration: {{ section.settings.subtitle_text_decoration }};{% endif %}
+                margin-bottom: {{ section.settings.subtitle_margin_bottom }}px;
+              "
+            >
+              {% if section.settings.enable_subtitle_gradient %}
+                <span class="gradient-text" style="
+                  background: linear-gradient(
+                    {{ section.settings.subtitle_gradient_direction }}deg, 
+                    {{ section.settings.subtitle_gradient_color_1 }} {{ section.settings.subtitle_gradient_position_1 }}%, 
+                    {{ section.settings.subtitle_gradient_color_2 }} {{ section.settings.subtitle_gradient_position_2 }}%
+                  );
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                  text-fill-color: transparent;
+                ">
+                  {{ spot.metafields.custom.subtitle }}
+                </span>
+              {% else %}
+                {{ spot.metafields.custom.subtitle }}
+              {% endif %}
+            </{{ section.settings.subtitle_tag }}>
+          {% endif %}
+
+          {% if section.settings.show_description and spot.content != blank %}
+            <div 
+              class="main-spots-info-description {% if section.settings.enable_description_text_shadow %}text-shadow{% endif %}"
+              style="
+                color: {{ section.settings.description_color }};
+                font-size: {{ section.settings.description_font_size }}px;
+                font-weight: {{ section.settings.description_font_weight }};
+                {% if section.settings.description_font_family != 'inherit' %}font-family: {{ section.settings.description_font_family }};{% endif %}
+                {% if section.settings.description_letter_spacing != blank %}letter-spacing: {{ section.settings.description_letter_spacing }}px;{% endif %}
+                {% if section.settings.description_line_height != blank %}line-height: {{ section.settings.description_line_height }};{% endif %}
+                {% if section.settings.description_text_transform != 'none' %}text-transform: {{ section.settings.description_text_transform }};{% endif %}
+                {% if section.settings.enable_description_text_shadow %}
+                  text-shadow: {{ section.settings.description_shadow_h_offset }}px {{ section.settings.description_shadow_v_offset }}px {{ section.settings.description_shadow_blur }}px {{ section.settings.description_shadow_color }};
+                {% endif %}
+                {% if section.settings.description_text_decoration != 'none' %}text-decoration: {{ section.settings.description_text_decoration }};{% endif %}
+                margin-bottom: {{ section.settings.description_margin_bottom }}px;
+              "
+            >
+              <div class="rte">
+                {{ spot.content }}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.show_location_label and spot.metafields.custom.location_name != blank %}
+            <div class="main-spots-info-location-label"
+                 style="
+                   color: {{ section.settings.location_label_color }};
+                   font-size: {{ section.settings.location_label_font_size }}px;
+                   font-weight: {{ section.settings.location_label_font_weight }};
+                   margin-bottom: {{ section.settings.location_label_margin_bottom }}px;
+                 "
+            >
+              {{ section.settings.location_label }}
+            </div>
+          {% endif %}
+
+          {% if section.settings.show_location_name and spot.metafields.custom.location_name != blank %}
+            <{{ section.settings.location_name_tag }} 
+              class="main-spots-info-location-name {% if section.settings.enable_location_name_text_shadow %}text-shadow{% endif %}"
+              style="
+                color: {{ section.settings.location_name_color }};
+                font-size: {{ section.settings.location_name_font_size }}px;
+                font-weight: {{ section.settings.location_name_font_weight }};
+                {% if section.settings.location_name_font_family != 'inherit' %}font-family: {{ section.settings.location_name_font_family }};{% endif %}
+                {% if section.settings.location_name_letter_spacing != blank %}letter-spacing: {{ section.settings.location_name_letter_spacing }}px;{% endif %}
+                {% if section.settings.location_name_line_height != blank %}line-height: {{ section.settings.location_name_line_height }};{% endif %}
+                {% if section.settings.location_name_text_transform != 'none' %}text-transform: {{ section.settings.location_name_text_transform }};{% endif %}
+                {% if section.settings.enable_location_name_text_shadow %}
+                  text-shadow: {{ section.settings.location_name_shadow_h_offset }}px {{ section.settings.location_name_shadow_v_offset }}px {{ section.settings.location_name_shadow_blur }}px {{ section.settings.location_name_shadow_color }};
+                {% endif %}
+                {% if section.settings.location_name_text_decoration != 'none' %}text-decoration: {{ section.settings.location_name_text_decoration }};{% endif %}
+                margin-bottom: {{ section.settings.location_name_margin_bottom }}px;
+              "
+            >
+              {% if section.settings.enable_location_name_gradient %}
+                <span class="gradient-text" style="
+                  background: linear-gradient(
+                    {{ section.settings.location_name_gradient_direction }}deg, 
+                    {{ section.settings.location_name_gradient_color_1 }} {{ section.settings.location_name_gradient_position_1 }}%, 
+                    {{ section.settings.location_name_gradient_color_2 }} {{ section.settings.location_name_gradient_position_2 }}%
+                  );
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                  text-fill-color: transparent;
+                ">
+                  {{ spot.metafields.custom.location_name }}
+                </span>
+              {% else %}
+                {{ spot.metafields.custom.location_name }}
+              {% endif %}
+            </{{ section.settings.location_name_tag }}>
+          {% endif %}
+
+          {% if section.settings.show_difficulty_level and spot.metafields.custom.difficulty_level != blank %}
+            <div class="spot-difficulty-level">
+              <span class="difficulty-label">{{ section.settings.difficulty_label }}</span>
+              <div class="difficulty-stars" style="color: {{ section.settings.difficulty_color }};">
+                {% assign difficulty = spot.metafields.custom.difficulty_level | times: 1 %}
+                {% for i in (1..5) %}
+                  {% if i <= difficulty %}
+                    <span class="difficulty-star filled">★</span>
+                  {% else %}
+                    <span class="difficulty-star">☆</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.show_features and spot.metafields.custom.features != blank %}
+            <div class="spot-features">
+              <h4 class="features-title">{{ section.settings.features_label }}</h4>
+              <ul class="features-list">
+                {% assign features = spot.metafields.custom.features | split: ',' %}
+                {% for feature in features %}
+                  <li class="feature-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    {{ feature | strip }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if section.settings.show_map and spot.metafields.custom.map_embed != blank %}
+            <div class="main-spots-info-map-container"
+                 style="
+                   margin-top: {{ section.settings.map_margin_top }}px;
+                   margin-bottom: {{ section.settings.map_margin_bottom }}px;
+                   border-radius: {{ section.settings.map_border_radius }}px;
+                   overflow: hidden;
+                   {% if section.settings.enable_map_shadow %}
+                     box-shadow: {{ section.settings.map_shadow_h_offset }}px {{ section.settings.map_shadow_v_offset }}px {{ section.settings.map_shadow_blur }}px {{ section.settings.map_shadow_spread }}px {{ section.settings.map_shadow_color }};
+                   {% endif %}
+                 "
+            >
+              <div class="main-spots-info-map">
+                {{ spot.metafields.custom.map_embed }}
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if section.settings.show_share_buttons %}
+            <div class="spot-share-buttons">
+              <h4 class="share-title">{{ section.settings.share_label }}</h4>
+              <div class="share-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ spot.url }}" target="_blank" class="share-button facebook">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text={{ spot.title | url_encode }}&url={{ shop.url }}{{ spot.url }}" target="_blank" class="share-button twitter">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                </a>
+                <a href="https://wa.me/?text={{ spot.title | url_encode }}%20{{ shop.url }}{{ spot.url }}" target="_blank" class="share-button whatsapp">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                </a>
+                <a href="https://www.instagram.com/" target="_blank" class="share-button instagram">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if section.settings.show_related_spots and collections[section.settings.related_spots_collection].products.size > 0 %}
+            <div class="related-spots">
+              <h3 class="related-spots-title">{{ section.settings.related_spots_title }}</h3>
+              <div class="related-spots-grid">
+                {% assign related_spots = collections[section.settings.related_spots_collection].products | where: "id", "!=" | limit: section.settings.related_spots_limit %}
+                {% for related_spot in related_spots %}
+                  <a href="{{ related_spot.url }}" class="related-spot">
+                    <div class="related-spot-image">
+                      {% if related_spot.featured_image != blank %}
+                        {{ related_spot.featured_image | image_url: width: 300 | image_tag: 
+                          loading: 'lazy', 
+                          alt: related_spot.title 
+                        }}
+                      {% else %}
+                        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {% endif %}
+                    </div>
+                    <div class="related-spot-info">
+                      <h4 class="related-spot-title">{{ related_spot.title }}</h4>
+                      {% if related_spot.metafields.custom.location_name != blank %}
+                        <p class="related-spot-location">{{ related_spot.metafields.custom.location_name }}</p>
+                      {% endif %}
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.main-spots-info-gr {
+  width: 100%;
+  max-width: 100%;
+}
+
+.main-spots-info-wrapper {
+  width: 100%;
+}
+
+.main-spots-info-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: {{ section.settings.columns_gap }}px;
+}
+
+@media screen and (min-width: 768px) {
+  .main-spots-info-content {
+    grid-template-columns: {{ section.settings.left_column_width }}% {{ section.settings.right_column_width }}%;
+  }
+}
+
+.main-spots-info-media-column,
+.main-spots-info-info-column {
+  width: 100%;
+}
+
+.main-spots-info-video-container,
+.main-spots-info-image-container,
+.main-spots-info-carousel,
+.main-spots-info-placeholder {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: {{ section.settings.media_aspect_ratio }}%;
+  overflow: hidden;
+  border-radius: {{ section.settings.media_border_radius }}px;
+  {% if section.settings.enable_media_shadow %}
+    box-shadow: {{ section.settings.media_shadow_h_offset }}px {{ section.settings.media_shadow_v_offset }}px {{ section.settings.media_shadow_blur }}px {{ section.settings.media_shadow_spread }}px {{ section.settings.media_shadow_color }};
+  {% endif %}
+}
+
+.main-spots-info-video-container video,
+.main-spots-info-image-container img,
+.main-spots-info-placeholder svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  {% if section.settings.video_cover %}
+    object-fit: cover;
+  {% else %}
+    object-fit: contain;
+  {% endif %}
+}
+
+.main-spots-info-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f4f4;
+  color: #888;
+}
+
+.main-spots-info-placeholder svg {
+  position: static;
+  width: 50%;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+/* Estilos del carrusel */
+.carousel-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.carousel-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-indicator.active {
+  background-color: #ffffff;
+  transform: scale(1.2);
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-control:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.carousel-control-prev {
+  left: 15px;
+}
+
+.carousel-control-next {
+  right: 15px;
+}
+
+/* Estilos de miniaturas */
+.spot-thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.spot-thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.spot-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spot-thumbnail.active {
+  opacity: 1;
+  transform: scale(1.05);
+  border: 2px solid {{ section.settings.thumbnail_active_border_color }};
+}
+
+.spot-thumbnail:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Estilos de la columna de información */
+.main-spots-info-info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-spots-info-info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos del nivel de dificultad */
+.spot-difficulty-level {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.difficulty-label {
+  margin-right: 10px;
+  font-weight: 500;
+  color: {{ section.settings.difficulty_label_color }};
+}
+
+.difficulty-stars {
+  display: flex;
+  font-size: 20px;
+}
+
+.difficulty-star {
+  margin-right: 2px;
+}
+
+.difficulty-star.filled {
+  color: {{ section.settings.difficulty_color }};
+}
+
+/* Estilos de características */
+.spot-features {
+  margin-bottom: 25px;
+}
+
+.features-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: {{ section.settings.features_title_color }};
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  color: {{ section.settings.features_text_color }};
+}
+
+.feature-item svg {
+  margin-right: 8px;
+  color: {{ section.settings.features_icon_color }};
+  flex-shrink: 0;
+}
+
+/* Estilos del mapa */
+.main-spots-info-map-container {
+  width: 100%;
+  position: relative;
+}
+
+.main-spots-info-map {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: {{ section.settings.map_aspect_ratio }}%;
+  overflow: hidden;
+}
+
+.main-spots-info-map iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Estilos para botones de compartir */
+.spot-share-buttons {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.share-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: {{ section.settings.share_title_color }};
+}
+
+.share-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.share-button:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+.share-button.facebook {
+  background-color: #3b5998;
+}
+
+.share-button.twitter {
+  background-color: #1da1f2;
+}
+
+.share-button.whatsapp {
+  background-color: #25d366;
+}
+
+.share-button.instagram {
+  background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+}
+
+/* Estilos para spots relacionados */
+.related-spots {
+  margin-top: 30px;
+}
+
+.related-spots-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: {{ section.settings.related_spots_title_color }};
+}
+
+.related-spots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.related-spot {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.related-spot:hover {
+  transform: translateY(-5px);
+}
+
+.related-spot-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.related-spot-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.related-spot-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: {{ section.settings.related_spots_text_color }};
+}
+
+.related-spot-location {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Estilos para textos con degradado */
+.gradient-text {
+  display: inline-block;
+}
+
+/* Estilos para sombras de texto */
+.text-shadow {
+  /* Las sombras se aplican inline */
+}
+
+/* Estilos responsivos */
+@media screen and (max-width: 767px) {
+  .main-spots-info-content {
+    gap: {{ section.settings.columns_gap_mobile }}px;
+  }
+  
+  .main-spots-info-media-column {
+    margin-bottom: {{ section.settings.columns_gap_mobile }}px;
+  }
+  
+  .carousel-control {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .carousel-indicator {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .related-spots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar carrusel si existe
+  const carousel = document.getElementById('SpotCarousel-{{ section.id }}');
+  if (carousel) {
+    initCarousel(carousel);
+  }
+  
+  // Inicializar miniaturas si existen
+  const thumbnails = document.querySelectorAll('.spot-thumbnail');
+  if (thumbnails.length > 0) {
+    initThumbnails(thumbnails);
+  }
+  
+  // Ajustar iframe de mapa si existe
+  const mapContainer = document.querySelector('.main-spots-info-map');
+  if (mapContainer) {
+    const iframe = mapContainer.querySelector('iframe');
+    if (iframe) {
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.position = 'absolute';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+      iframe.style.border = '0';
+    }
+  }
+});
+
+function initCarousel(carousel) {
+  const slides = carousel.querySelectorAll('.carousel-slide');
+  const indicators = carousel.querySelectorAll('.carousel-indicator');
+  const prevButton = carousel.querySelector('.carousel-control-prev');
+  const nextButton = carousel.querySelector('.carousel-control-next');
+  
+  if (slides.length <= 1) return;
+  
+  let currentSlide = 0;
+  let slideInterval;
+  const intervalTime = {{ section.settings.carousel_speed | times: 1000 }};
+  
+  // Función para mostrar un slide específico
+  function showSlide(index) {
+    // Ocultar todos los slides
+    slides.forEach(slide => {
+      slide.classList.remove('active');
+    });
+    
+    // Desactivar todos los indicadores
+    indicators.forEach(indicator => {
+      indicator.classList.remove('active');
+    });
+    
+    // Actualizar miniaturas si existen
+    const thumbnails = document.querySelectorAll('.spot-thumbnail');
+    if (thumbnails.length > 0) {
+      thumbnails.forEach(thumb => {
+        thumb.classList.remove('active');
+      });
+      
+      const activeThumb = document.querySelector(`.spot-thumbnail[data-slide-index="${index}"]`);
+      if (activeThumb) {
+        activeThumb.classList.add('active');
+      }
+    }
+    
+    // Mostrar el slide actual
+    currentSlide = index;
+    if (currentSlide >= slides.length) currentSlide = 0;
+    if (currentSlide < 0) currentSlide = slides.length - 1;
+    
+    slides[currentSlide].classList.add('active');
+    
+    // Activar el indicador correspondiente
+    if (indicators.length > 0 && indicators[currentSlide]) {
+      indicators[currentSlide].classList.add('active');
+    }
+  }
+  
+  // Función para avanzar al siguiente slide
+  function nextSlide() {
+    showSlide(currentSlide + 1);
+  }
+  
+  // Función para retroceder al slide anterior
+  function prevSlide() {
+    showSlide(currentSlide - 1);
+  }
+  
+  // Iniciar el carrusel automático
+  function startCarousel() {
+    if (slides.length > 1 && {{ section.settings.carousel_autoplay }}) {
+      slideInterval = setInterval(nextSlide, intervalTime);
+    }
+  }
+  
+  // Detener el carrusel automático
+  function stopCarousel() {
+    clearInterval(slideInterval);
+  }
+  
+  // Eventos para los controles del carrusel
+  if (prevButton) {
+    prevButton.addEventListener('click', function() {
+      prevSlide();
+      stopCarousel();
+      startCarousel();
+    });
+  }
+  
+  if (nextButton) {
+    nextButton.addEventListener('click', function() {
+      nextSlide();
+      stopCarousel();
+      startCarousel();
+    });
+  }
+  
+  // Eventos para los indicadores
+  indicators.forEach((indicator, index) => {
+    indicator.addEventListener('click', function() {
+      showSlide(index);
+      stopCarousel();
+      startCarousel();
+    });
+  });
+  
+  // Pausar el carrusel al pasar el ratón por encima
+  carousel.addEventListener('mouseenter', stopCarousel);
+  carousel.addEventListener('mouseleave', startCarousel);
+  
+  // Soporte para gestos táctiles
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  carousel.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  
+  carousel.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+  
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    if (touchEndX < touchStartX - swipeThreshold) {
+      // Deslizar a la izquierda (siguiente)
+      nextSlide();
+    } else if (touchEndX > touchStartX + swipeThreshold) {
+      // Deslizar a la derecha (anterior)
+      prevSlide();
+    }
+    stopCarousel();
+    startCarousel();
+  }
+  
+  // Iniciar el carrusel
+  startCarousel();
+}
+
+function initThumbnails(thumbnails) {
+  thumbnails.forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+      const slideIndex = parseInt(this.getAttribute('data-slide-index'));
+      const carousel = document.getElementById('SpotCarousel-{{ section.id }}');
+      if (carousel) {
+        const slides = carousel.querySelectorAll('.carousel-slide');
+        const indicators = carousel.querySelectorAll('.carousel-indicator');
+        
+        // Ocultar todos los slides
+        slides.forEach(slide => {
+          slide.classList.remove('active');
+        });
+        
+        // Desactivar todos los indicadores
+        indicators.forEach(indicator => {
+          indicator.classList.remove('active');
+        });
+        
+        // Desactivar todas las miniaturas
+        thumbnails.forEach(thumb => {
+          thumb.classList.remove('active');
+        });
+        
+        // Activar el slide, indicador y miniatura correspondientes
+        slides[slideIndex].classList.add('active');
+        if (indicators[slideIndex]) {
+          indicators[slideIndex].classList.add('active');
+        }
+        this.classList.add('active');
+      }
+    });
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Main Spots Info GR",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Diseño general"
+    },
+    {
+      "type": "range",
+      "id": "left_column_width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Ancho de columna izquierda",
+      "default": 50,
+      "info": "En dispositivos móviles, las columnas se apilarán verticalmente"
+    },
+    {
+      "type": "range",
+      "id": "right_column_width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Ancho de columna derecha",
+      "default": 50,
+      "info": "En dispositivos móviles, las columnas se apilarán verticalmente"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_mobile",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacio entre columnas (móvil)",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Fondo y espaciado"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Tipo de fondo",
+      "options": [
+        {
+          "value": "none",
+          "label": "Ninguno"
+        },
+        {
+          "value": "color",
+          "label": "Color sólido"
+        },
+        {
+          "value": "gradient",
+          "label": "Degradado"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "range",
+      "id": "gradient_direction",
+      "min": 0,
+      "max": 360,
+      "step": 5,
+      "unit": "°",
+      "label": "Dirección del degradado",
+      "default": 90
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Color 1 del degradado",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "range",
+      "id": "gradient_position_1",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Posición del color 1",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Color 2 del degradado",
+      "default": "#f1f1f1"
+    },
+    {
+      "type": "range",
+      "id": "gradient_position_2",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Posición del color 2",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen superior",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Relleno",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Sombra del contenedor"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shadow",
+      "label": "Habilitar sombra",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "shadow_h_offset",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desplazamiento horizontal",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "shadow_v_offset",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desplazamiento vertical",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Desenfoque",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "shadow_spread",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Expansión",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Color de sombra",
+      "default": "rgba(0,0,0,0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Configuración de medios (Columna izquierda)"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Tipo de medio",
+      "options": [
+        {
+          "value": "carousel",
+          "label": "Carrusel de imágenes"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        },
+        {
+          "value": "image",
+          "label": "Imagen única"
+        }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Reproducción automática",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Reproducir en bucle",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Silenciar video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "controls",
+      "label": "Mostrar controles de video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "video_cover",
+      "label": "Ajustar video a contenedor",
+      "default": true,
+      "info": "Si está activado, el video se recortará para llenar el contenedor"
+    },
+    {
+      "type": "range",
+      "id": "media_aspect_ratio",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Relación de aspecto",
+      "default": 75,
+      "info": "Porcentaje de altura respecto al ancho (75% = relación 4:3)"
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_media_shadow",
+      "label": "Habilitar sombra",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "media_shadow_h_offset",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desplazamiento horizontal",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "media_shadow_v_offset",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desplazamiento vertical",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "media_shadow_blur",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Desenfoque",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "media_shadow_spread",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Expansión",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "media_shadow_color",
+      "label": "Color de sombra",
+      "default": "rgba(0,0,0,0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Miniaturas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gallery_thumbnails",
+      "label": "Mostrar miniaturas",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "thumbnail_active_border_color",
+      "label": "Color de borde de miniatura activa",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "header",
+      "content": "Configuración del carrusel"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_indicators",
+      "label": "Mostrar indicadores del carrusel",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_controls",
+      "label": "Mostrar controles del carrusel",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_autoplay",
+      "label": "Reproducción automática",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "carousel_speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Velocidad de transición",
+      "default": 5,
+      "info": "Tiempo en segundos entre cada imagen"
+    },
+    {
+      "type": "header",
+      "content": "Nombre del Spot (Título)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_spot_name",
+      "label": "Mostrar nombre del spot",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "spot_name_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 16,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de fuente",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Grosor de fuente",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medio"
+        },
+        {
+          "value": "600",
+          "label": "Semi-negrita"
+        },
+        {
+          "value": "700",
+          "label": "Negrita"
+        },
+        {
+          "value": "800",
+          "label": "Extra-negrita"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "title_font_family",
+      "label": "Familia de fuente",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Tema predeterminado"
+        },
+        {
+          "value": "Arial, sans-serif",
+          "label": "Arial"
+        },
+        {
+          "value": "Helvetica, sans-serif",
+          "label": "Helvetica"
+        },
+        {
+          "value": "Georgia, serif",
+          "label": "Georgia"
+        },
+        {
+          "value": "Times New Roman, serif",
+          "label": "Times New Roman"
+        }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "min": -2,
+      "max": 10,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Espaciado entre letras",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "label": "Altura de línea",
+      "default": 1.2
+    },
+    {
+      "type": "select",
+      "id": "title_text_transform",
+      "label": "Transformación de texto",
+      "options": [
+        {
+          "value": "none",
+          "label": "Ninguna"
+        },
+        {
+          "value": "uppercase",
+          "label": "MAYÚSCULAS"
+        },
+        {
+          "value": "lowercase",
+          "label": "minúsculas"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalizar Cada Palabra"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_title_gradient",
+      "label": "Habilitar texto con degradado",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "title_gradient_direction",
+      "min": 0,
+      "max": 360,
+      "step": 5,
+      "unit": "°",
+      "label": "Dirección del degradado",
+      "default": 90
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_color_1",
+      "label": "Color 1",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "range",
+      "id": "title_gradient_position_1",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Posición del color 1",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "title_gradient_color_2",
+      "label": "Color 2",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_gradient_position_2",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "Posición del color 2",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_title_text_shadow",
+      "label": "Habilitar sombra de texto",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Subtítulo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subtitle",
+      "label": "Mostrar subtítulo",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "subtitle_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "p",
+          "label": "Párrafo"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de fuente",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "subtitle_font_weight",
+      "label": "Grosor de fuente",
+      "options": [
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medio"
+        },
+        {
+          "value": "600",
+          "label": "Semi-negrita"
+        },
+        {
+          "value": "700",
+          "label": "Negrita"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_subtitle_gradient",
+      "label": "Habilitar texto con degradado",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Descripción"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Mostrar descripción",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color de la descripción",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de fuente",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_margin_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Ubicación"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_location_label",
+      "label": "Mostrar etiqueta de ubicación",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "location_label",
+      "label": "Etiqueta de ubicación",
+      "default": "Ubicación"
+    },
+    {
+      "type": "color",
+      "id": "location_label_color",
+      "label": "Color de la etiqueta",
+      "default": "#888888"
+    },
+    {
+      "type": "range",
+      "id": "location_label_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de fuente",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "show_location_name",
+      "label": "Mostrar nombre de ubicación",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "location_name_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "p",
+          "label": "Párrafo"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "color",
+      "id": "location_name_color",
+      "label": "Color del nombre de ubicación",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Nivel de dificultad"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_difficulty_level",
+      "label": "Mostrar nivel de dificultad",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "difficulty_label",
+      "label": "Etiqueta de dificultad",
+      "default": "Nivel de dificultad:"
+    },
+    {
+      "type": "color",
+      "id": "difficulty_label_color",
+      "label": "Color de la etiqueta",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "difficulty_color",
+      "label": "Color de las estrellas",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "header",
+      "content": "Características"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Mostrar características",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "features_label",
+      "label": "Etiqueta de características",
+      "default": "Características del spot:"
+    },
+    {
+      "type": "color",
+      "id": "features_title_color",
+      "label": "Color del título",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "features_text_color",
+      "label": "Color del texto",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "features_icon_color",
+      "label": "Color de los iconos",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "header",
+      "content": "Mapa de Google Maps"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "Mostrar mapa",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "map_aspect_ratio",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Relación de aspecto",
+      "default": 75,
+      "info": "Porcentaje de altura respecto al ancho (75% = relación 4:3)"
+    },
+    {
+      "type": "range",
+      "id": "map_margin_top",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen superior",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "map_margin_bottom",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "map_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_map_shadow",
+      "label": "Habilitar sombra",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Compartir en redes sociales"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Mostrar botones para compartir",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "share_label",
+      "label": "Etiqueta para compartir",
+      "default": "Comparte este spot:"
+    },
+    {
+      "type": "color",
+      "id": "share_title_color",
+      "label": "Color del título",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Spots relacionados"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_spots",
+      "label": "Mostrar spots relacionados",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_spots_title",
+      "label": "Título de spots relacionados",
+      "default": "Spots relacionados"
+    },
+    {
+      "type": "collection",
+      "id": "related_spots_collection",
+      "label": "Colección de spots relacionados"
+    },
+    {
+      "type": "range",
+      "id": "related_spots_limit",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Número de spots a mostrar",
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "related_spots_title_color",
+      "label": "Color del título",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "related_spots_text_color",
+      "label": "Color del texto",
+      "default": "#666666"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Spots Info GR",
+      "category": "Personalizado"
+    }
+  ]
+}
+{% endschema %}

@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function updateNavbarOpacity() {
       if (window.scrollY > 50) {
-        // Aplicar opacidad mayor al hacer scroll
+        // Aplicar opacidad mayor y desenfoque al hacer scroll
         const rgbaColor = navbarColor.startsWith("rgba")
           ? navbarColor.replace(/[\d.]+\)$/, scrolledOpacity + ")")
           : navbarColor.startsWith("rgb")
