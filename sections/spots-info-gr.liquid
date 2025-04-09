@@ -110,7 +110,7 @@
       
       <!-- Columna derecha: Información y mapa -->
       <div class="spots-info-info-column">
-        <div class="spots-info-info-content">
+        <div class="spots-info-info-content" style="width: 100%; padding: 20px;">
           {% if section.settings.show_spot_name %}
             <{{ section.settings.spot_name_tag }} 
               class="spots-info-title {% if section.settings.enable_title_text_shadow %}text-shadow{% endif %} {% if section.settings.enable_title_animation %}animated-text{% endif %}"
@@ -295,6 +295,8 @@
                      box-shadow: {{ section.settings.map_shadow_h_offset }}px {{ section.settings.map_shadow_v_offset }}px {{ section.settings.map_shadow_blur }}px {{ section.settings.map_shadow_spread }}px {{ section.settings.map_shadow_color }};
                    {% endif %}
                    max-height: {{ section.settings.map_max_height }}px;
+                   width: 100%;
+                   position: relative;
                  "
                  data-animation="{{ section.settings.map_animation_type }}"
                  data-animation-delay="{{ section.settings.map_animation_delay }}ms"
@@ -319,6 +321,8 @@
 
 .spots-info-wrapper {
   width: 100%;
+  min-height: 400px; /* Asegura una altura mínima */
+  display: block;
 }
 
 .spots-info-content {
@@ -589,14 +593,14 @@
 
 .animated-text[data-animation="fade-in"],
 .animated-element[data-animation="fade-in"] {
-  opacity: 0;
+  opacity: 1; /* Cambiado de 0 a 1 */
   animation: fadeIn var(--animation-duration) ease forwards var(--animation-delay);
 }
 
 .animated-text[data-animation="slide-up"],
 .animated-element[data-animation="slide-up"] {
-  opacity: 0;
-  transform: translateY(30px);
+  opacity: 1; /* Cambiado de 0 a 1 */
+  transform: translateY(0); /* Cambiado de 30px a 0 */
   animation: slideUp var(--animation-duration) ease forwards var(--animation-delay);
 }
 
@@ -830,7 +834,8 @@ function initAnimations() {
   }, { threshold: 0.1 });
   
   animatedElements.forEach(element => {
-    element.style.visibility = 'hidden';
+    // Cambiar esto para que los elementos sean visibles por defecto
+    element.style.visibility = 'visible';
     observer.observe(element);
   });
 }
